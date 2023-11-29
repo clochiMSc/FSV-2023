@@ -1,0 +1,23 @@
+obj RINGCOUNTER is
+    protecting NAT .
+    sorts Counter .
+    op reset : -> Counter .
+    op inc : Counter -> Counter .
+    op dec : Counter -> Counter .
+
+    var c : Counter .
+    eq dec(inc(c)) = c . 
+    eq inc(dec(c)) = c .
+
+    op p : -> Counter .
+    eq inc(p) = reset .
+    eq dec(reset) = p .
+    
+    op value : Counter -> Nat .
+    ceq value(inc(c)) = value(c) + 1 if c =/= p .
+    ceq value(dec(c)) + 1 = value(c) if c =/= reset .
+
+    eq value(reset) = 0 .
+    eq value(p) = 100 .
+
+endo

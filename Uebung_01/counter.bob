@@ -1,6 +1,16 @@
 obj COUNTER is
+  protecting INT .
   sorts Counter .
   op reset : -> Counter .
   op inc : Counter -> Counter .
   op dec : Counter -> Counter .
+
+  var c : Counter .
+  eq dec(inc(c)) = c . 
+  eq inc(dec(c)) = c .
+
+  op value : Counter -> Int .
+  eq value(inc(c)) = value(c) + 1 .
+  eq value(dec(c)) = value(c) - 1 .
+
 endo
