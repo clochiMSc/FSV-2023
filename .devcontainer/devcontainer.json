@@ -1,4 +1,5 @@
 {
+    "runArgs": ["--name", "FSV"],
     "name": "BOBJ development environment",
     "build": {
         "dockerfile": "Dockerfile"

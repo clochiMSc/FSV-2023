@@ -1,0 +1,22 @@
+obj STACK is
+    protecting NAT .
+    sorts Stack Stack? Nat? .
+    subsort Stack < Stack? .
+    subsort Nat < Nat? .
+
+    op empty : -> Stack .
+    op push : Nat Stack -> Stack .
+    op push : Nat Stack? -> Stack? .
+    op pop_ : Stack -> Stack? .
+    op top_ : Stack -> Nat? .
+    op topless : -> Nat? .
+    op underflow : -> Stack? .
+
+    var X : Nat . 
+    var S : Stack .
+
+    eq top push(X,S) = X .
+    eq pop push(X,S) = S .
+    eq pop empty = underflow .
+    eq top empty = topless .
+endo

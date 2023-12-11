@@ -1,0 +1,51 @@
+obj LADUNGSTRAEGER is
+    protecting NAT .
+    sorts Ladungstraeger Beschreibung .
+
+    op traeger : Nat Beschreibung -> Ladungstraeger .
+    op kennung : Ladungstraeger -> Nat .
+    op beschreibung : Ladungstraeger -> Beschreibung .
+
+    
+    var k : Nat .
+    var b : Beschreibung .
+
+    eq kennung(traeger(k,b)) = k .
+    eq beschreibung(traeger(k,b)) = b .
+end
+
+obj FACH is
+    protecting NAT .
+    sorts Fach .
+
+    op fach : Nat Nat Nat -> Fach .
+    op ebene : Fach -> Nat .
+    op gang : Fach -> Nat .
+    op regal : Fach -> Nat .
+
+    var e : Nat .
+    var g : Nat .
+    var r : Nat .
+
+    eq ebene(fach(g,r,e)) = e .
+    eq regal(fach(g,r,e)) = r .
+    eq gang(fach(g,r,e)) = g .
+end
+
+obj EINPLATZREGAL is
+    protecting FACH .
+    protecting LADUNGSTRAEGER .
+
+    sorts Einplatzregal .
+
+    op leeresLager : -> Einplatzregal .
+    op einlagern : Fach Ladungstraeger Einplatzregal -> Einplatzregal .
+    op auslagern : Nat Einplatzregal -> Einplatzregal .
+
+    var k : Nat .
+    var b : Beschreibung .
+    var f : Fach .
+    var epr : Einplatzregal .
+
+    eq auslagern(k, einlagern(f, traeger(k,b), epr)) = epr .
+endo
