@@ -1,0 +1,96 @@
+*** Spezifikation einer Lagerverwaltung eines Einplatzregal-Lagers    2023-11-15
+
+*** Ladungsträger (etwa Euro-Paletten oder Gitterboxen) sind die Elemente, die im
+*** Lager abgelegt werden. Sie besitzen eine Beschreibung und eindeutige Kennung.
+*** Diese Spezifikation ist ein Beispiel für die Festlegung eines strukturierten
+*** Datums (Struct, Revord, Datenobjekt) mit Konstruktor und Accessoren.
+obj LADUNGSTRAEGER is
+   sorts Ladungsträger Kennung WarenBeschreibung.
+
+   op ladungsträger : Kennung WarenBeschreibung -> Ladungsträger .
+   op kennung : Ladungsträger -> Kennung .
+   op warenbeschreibung : Ladungsträger -> WarenBeschreibung .
+
+   var k : Kennung .
+   var b : WarenBeschreibung .
+   
+   eq kennung(ladungsträger(k,b)) = k .
+   eq warenbeschreibung(ladungsträger(k,b)) = b .
+endo
+
+*** Ladungsträger werden im Lager in Fächern (Lagerfach, Lagerplatz) abgelegt.
+*** Sie befinden sich an einem bestimmten Ort (Gangnummer, Regalnummer, Ebene) im Lager.
+*** Auch hier wird ein strukturiertes Datum festgelegt.
+obj LAGERFACH is
+    protecting INT .
+    sort Lagerfach .
+    op lagerfach : Int Int Int -> Lagerfach .
+    op gang : Lagerfach -> Int .
+    op regal : Lagerfach -> Int .
+    op ebene : Lagerfach -> Int .
+
+    vars g r e : Int .
+    eq gang(lagerfach(g,r,e)) = g .
+    eq regal(lagerfach(g,r,e)) = r .
+    eq ebene(lagerfach(g,r,e)) = e .
+endo
+
+*** Die Spezifikation der Lagerverwaltung legt die Operationen des Einlagern und des Auslagerns
+*** von Ladungsträgern fest.
+*** Das Verwaltungssystem ist initial mit der ausgezeichneten Lagerbelegung leeresLager belegt.
+obj LAGER_VERWALTUNG is
+  protecting LADUNGSTRAEGER .
+  protecting LAGERFACH .
+
+  sort  Lager .
+
+  op leeresLager : -> Lager .
+  op einlagern : Ladungsträger Lagerfach  Lager -> Lager .
+  op auslagern : Kennung Lager -> Lager .
+
+  var k k' : Kennung .
+  var b : WarenBeschreibung .
+  var traeger : Ladungsträger .
+  var fach : Lagerfach .
+  var lager : Lager .
+  
+*** Idempotenz von einlagern und auslagern
+eq auslagern(k, einlagern(ladungsträger(k, b), fach, lager)) = lager .
+
+ceq auslagern(k, einlagern(ladungsträger(k', b), fach, lager)) = einlagern(ladungsträger(k', b), fach, auslagern(k, lager)) if k =/= k' .
+eq auslagern(k, leeresLager) = leeresLager .
+endo
+
+
+*** Die Spezifikation kann nun befragt werden.
+open LAGER_VERWALTUNG .
+
+ ops G R E : -> Int .
+ op B : -> WarenBeschreibung .
+ op K : -> Kennung .
+ op L : -> Lager .
+
+ reduce leeresLager .
+ reduce einlagern( ladungsträger(K, B), lagerfach(G, R, E) , L) .
+
+ *** Einlagern und unmittelbares Auslagern heben sich auf.
+ reduce auslagern(K, einlagern( ladungsträger(K, B), lagerfach(G, R, E) , L)) . ***> must be L
+
+*** Das Lager selbst erlaubt einen direkten Zugriff auf die Ladungsträger aber die
+*** spezifiierete Lagerverwaltung verwendet Lager-Terme zur repräsentation des Laderzustands.
+*** Um einen früher eingelagerten Ladungsträger wieder zu entfernen, muss der Lager-Term 
+*** durchsucht werden. (Praktisch wäre es besser eine allgemeine Datenstruktur für wahlrfreien
+*** Zugriff vorab zu spezifizieren und sie hier zu verwenden.)
+ ops G1 R1 E1 G2 R2 E2 : -> Int .
+ ops B1 B2 : -> WarenBeschreibung .
+ ops K1 K2 : -> Kennung .
+
+ 
+ reduce auslagern(K2, einlagern( ladungsträger(K1, B1), lagerfach(G1, R1, E1) , L)) . 
+    ***> Must be auslagern(K2, L) 
+ 
+ reduce auslagern(K2, einlagern( ladungsträger(K1, B1), lagerfach(G1, R1, E1), 
+                      einlagern( ladungsträger(K2, B2), lagerfach(G2, R2, E2), 
+                      L))) .
+    ***> Must be einlagern( ladungsträger(K1, B), lagerfach(G1, R1, E1) , L)
+close

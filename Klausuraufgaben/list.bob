@@ -1,0 +1,22 @@
+obj LIST is
+    sorts NatList .
+    protecting NAT BOOL .
+
+    op emptyList : -> NatList .
+    op const : Nat NatList -> NatList .
+    op tail : NatList -> NatList .
+    op head : NatList -> Nat .
+    op empty : NatList -> Bool .
+    op length : NatList -> Nat .
+
+    var n : Nat .
+    var l : NatList .
+
+    eq head(const(n,emptyList)) = n .
+    eq tail(const(n,emptyList)) = emptyList .
+    eq length(const(n,l)) = length(l) + 1 .
+    eq length(emptyList) = 0 .
+    ceq empty(l) = true if length(l) == 0 .
+    ceq empty(l) = false if length(l) =/= 0 .
+
+endo

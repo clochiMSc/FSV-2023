@@ -1,0 +1,17 @@
+obj PHONEBOOK is
+    sorts Phonebook Number Name .
+
+    op create : -> Phonebook .
+    op addName : Name Number Phonebook -> Phonebook .
+    op lookup : Name Phonebook -> Number .
+    op delName : Name Phonebook -> Phonebook .
+
+    var p : Phonebook .
+    var num : Number .
+    var name : Name .
+
+    eq lookup(n, addName(n, num, p)) = num .
+    eq delName(n, addName(n, num, p)) = p .
+
+endo
+    

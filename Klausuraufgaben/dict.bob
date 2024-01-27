@@ -1,0 +1,18 @@
+
+
+obj DICTIONARY is
+    sorts Dictionary Key Value.
+    
+    op new : -> Dictionary .
+    op insert : Key Value Dictionary -> Dictionary .
+    op find : Key Dictionary -> Value .
+    op delete : Key Dictionary -> Dictionary .
+
+    var d : Dictionary
+    var k : Key 
+    var v : Value 
+
+    eq find(k, insert(k,v,d)) = v 
+    eq delete(k, insert(k,v,d)) = d 
+    eq 
+endo

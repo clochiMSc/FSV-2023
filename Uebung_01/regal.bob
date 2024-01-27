@@ -42,10 +42,12 @@ obj EINPLATZREGAL is
     op einlagern : Fach Ladungstraeger Einplatzregal -> Einplatzregal .
     op auslagern : Nat Einplatzregal -> Einplatzregal .
 
-    var k : Nat .
+    var k k' : Nat .
     var b : Beschreibung .
     var f : Fach .
     var epr : Einplatzregal .
 
     eq auslagern(k, einlagern(f, traeger(k,b), epr)) = epr .
+    eq auslagern(k', einlagern(f, traeger(k,b), epr)) = einlagern(f, traeger(k,b), auslagern(k', epr)) if k =/= k' .
+    eq auslagern(k, leeresLager) = leeresLager .
 endo
